@@ -5,6 +5,8 @@ Software/Apps/*/build/
 Output/*
 !Output/.gitignore
 !Output/app-manifest.json
+dist/*
+!dist/.gitignore
 *.zip
 *.elf
 *.bin
