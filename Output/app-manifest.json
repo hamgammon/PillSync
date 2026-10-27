@@ -1,0 +1,273 @@
+{
+  "manifest_version": 1,
+  "type": [
+    "utility"
+  ],
+  "name": "PillSync",
+  "icon": "Resources/icon_60x60.png",
+  "binary": "PillSync_1.0.0.uapp",
+  "appVersion": "1.0.0",
+  "minKernelVersion": "1.4.0",
+  "requiredHardware": [],
+  "description": "Track up to 5 medications with 3 daily alarms each and up to 3 snoozes per alarm.",
+  "id": "C48F9E21A3B76D50",
+  "configFile": "app_config.json",
+  "configFields": [
+    {
+      "id": "med1Name",
+      "type": "string",
+      "label": "Medication 1 Name",
+      "description": "Display name for Medication 1.",
+      "default": "Medication 1",
+      "minLength": 1,
+      "maxLength": 16,
+      "pattern": "[A-Za-z0-9 _-]+",
+      "validationMessage": "Up to 16 letters, digits, spaces, underscores, or hyphens."
+    },
+    {
+      "id": "med1Enabled",
+      "type": "bool",
+      "label": "Medication 1 Enabled",
+      "description": "Enable daily reminders for Medication 1.",
+      "default": true
+    },
+    {
+      "id": "med1Alarm1",
+      "type": "string",
+      "label": "Med 1 Alarm 1 (HH:MM or OFF)",
+      "description": "First daily alarm time in 24h HH:MM format (e.g. 09:00) or OFF.",
+      "default": "09:00",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med1Alarm2",
+      "type": "string",
+      "label": "Med 1 Alarm 2 (HH:MM or OFF)",
+      "description": "Second daily alarm time in 24h HH:MM format (e.g. 10:00) or OFF.",
+      "default": "10:00",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med1Alarm3",
+      "type": "string",
+      "label": "Med 1 Alarm 3 (HH:MM or OFF)",
+      "description": "Third daily alarm time in 24h HH:MM format (e.g. 18:00) or OFF.",
+      "default": "18:00",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med2Name",
+      "type": "string",
+      "label": "Medication 2 Name",
+      "description": "Display name for Medication 2.",
+      "default": "Medication 2",
+      "minLength": 1,
+      "maxLength": 16,
+      "pattern": "[A-Za-z0-9 _-]+",
+      "validationMessage": "Up to 16 letters, digits, spaces, underscores, or hyphens."
+    },
+    {
+      "id": "med2Enabled",
+      "type": "bool",
+      "label": "Medication 2 Enabled",
+      "description": "Enable daily reminders for Medication 2.",
+      "default": false
+    },
+    {
+      "id": "med2Alarm1",
+      "type": "string",
+      "label": "Med 2 Alarm 1 (HH:MM or OFF)",
+      "description": "First daily alarm time in 24h HH:MM format (e.g. 09:00) or OFF.",
+      "default": "09:00",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med2Alarm2",
+      "type": "string",
+      "label": "Med 2 Alarm 2 (HH:MM or OFF)",
+      "description": "Second daily alarm time in 24h HH:MM format (e.g. 13:00) or OFF.",
+      "default": "OFF",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med2Alarm3",
+      "type": "string",
+      "label": "Med 2 Alarm 3 (HH:MM or OFF)",
+      "description": "Third daily alarm time in 24h HH:MM format (e.g. 18:00) or OFF.",
+      "default": "OFF",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med3Name",
+      "type": "string",
+      "label": "Medication 3 Name",
+      "description": "Display name for Medication 3.",
+      "default": "Medication 3",
+      "minLength": 1,
+      "maxLength": 16,
+      "pattern": "[A-Za-z0-9 _-]+",
+      "validationMessage": "Up to 16 letters, digits, spaces, underscores, or hyphens."
+    },
+    {
+      "id": "med3Enabled",
+      "type": "bool",
+      "label": "Medication 3 Enabled",
+      "description": "Enable daily reminders for Medication 3.",
+      "default": false
+    },
+    {
+      "id": "med3Alarm1",
+      "type": "string",
+      "label": "Med 3 Alarm 1 (HH:MM or OFF)",
+      "description": "First daily alarm time in 24h HH:MM format (e.g. 09:00) or OFF.",
+      "default": "09:00",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med3Alarm2",
+      "type": "string",
+      "label": "Med 3 Alarm 2 (HH:MM or OFF)",
+      "description": "Second daily alarm time in 24h HH:MM format (e.g. 13:00) or OFF.",
+      "default": "OFF",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med3Alarm3",
+      "type": "string",
+      "label": "Med 3 Alarm 3 (HH:MM or OFF)",
+      "description": "Third daily alarm time in 24h HH:MM format (e.g. 18:00) or OFF.",
+      "default": "OFF",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med4Name",
+      "type": "string",
+      "label": "Medication 4 Name",
+      "description": "Display name for Medication 4.",
+      "default": "Medication 4",
+      "minLength": 1,
+      "maxLength": 16,
+      "pattern": "[A-Za-z0-9 _-]+",
+      "validationMessage": "Up to 16 letters, digits, spaces, underscores, or hyphens."
+    },
+    {
+      "id": "med4Enabled",
+      "type": "bool",
+      "label": "Medication 4 Enabled",
+      "description": "Enable daily reminders for Medication 4.",
+      "default": false
+    },
+    {
+      "id": "med4Alarm1",
+      "type": "string",
+      "label": "Med 4 Alarm 1 (HH:MM or OFF)",
+      "description": "First daily alarm time in 24h HH:MM format (e.g. 09:00) or OFF.",
+      "default": "09:00",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med4Alarm2",
+      "type": "string",
+      "label": "Med 4 Alarm 2 (HH:MM or OFF)",
+      "description": "Second daily alarm time in 24h HH:MM format (e.g. 13:00) or OFF.",
+      "default": "OFF",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med4Alarm3",
+      "type": "string",
+      "label": "Med 4 Alarm 3 (HH:MM or OFF)",
+      "description": "Third daily alarm time in 24h HH:MM format (e.g. 18:00) or OFF.",
+      "default": "OFF",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med5Name",
+      "type": "string",
+      "label": "Medication 5 Name",
+      "description": "Display name for Medication 5.",
+      "default": "Medication 5",
+      "minLength": 1,
+      "maxLength": 16,
+      "pattern": "[A-Za-z0-9 _-]+",
+      "validationMessage": "Up to 16 letters, digits, spaces, underscores, or hyphens."
+    },
+    {
+      "id": "med5Enabled",
+      "type": "bool",
+      "label": "Medication 5 Enabled",
+      "description": "Enable daily reminders for Medication 5.",
+      "default": false
+    },
+    {
+      "id": "med5Alarm1",
+      "type": "string",
+      "label": "Med 5 Alarm 1 (HH:MM or OFF)",
+      "description": "First daily alarm time in 24h HH:MM format (e.g. 09:00) or OFF.",
+      "default": "09:00",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med5Alarm2",
+      "type": "string",
+      "label": "Med 5 Alarm 2 (HH:MM or OFF)",
+      "description": "Second daily alarm time in 24h HH:MM format (e.g. 13:00) or OFF.",
+      "default": "OFF",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    },
+    {
+      "id": "med5Alarm3",
+      "type": "string",
+      "label": "Med 5 Alarm 3 (HH:MM or OFF)",
+      "description": "Third daily alarm time in 24h HH:MM format (e.g. 18:00) or OFF.",
+      "default": "OFF",
+      "minLength": 3,
+      "maxLength": 5,
+      "pattern": "OFF|([01][0-9]|2[0-3]):[0-5][0-9]",
+      "validationMessage": "Use 24h HH:MM format (00:00 to 23:59) or OFF."
+    }
+  ]
+}
+

@@ -1,0 +1,21 @@
+# Build artifacts
+build/
+**/build/
+Software/Apps/*/build/
+Output/*
+!Output/.gitignore
+!Output/app-manifest.json
+*.zip
+*.elf
+*.bin
+*.map
+*.o
+*.obj
+
+# Editor & OS files
+.vscode/
+.idea/
+*.swp
+*.bak
+*~
+.DS_Store

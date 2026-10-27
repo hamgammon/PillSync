@@ -1,0 +1,97 @@
+{
+  "fonts": [
+    {
+      "name": "poppins_regular_18",
+      "file": "Poppins-Regular.ttf",
+      "size": 18,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_italic_18",
+      "file": "Poppins-Italic.ttf",
+      "size": 18,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_italic_20",
+      "file": "Poppins-Italic.ttf",
+      "size": 20,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_medium_18",
+      "file": "Poppins-Medium.ttf",
+      "size": 18,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_medium_25",
+      "file": "Poppins-Medium.ttf",
+      "size": 25,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_medium_40",
+      "file": "Poppins-Medium.ttf",
+      "size": 40,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_semibold_20",
+      "file": "Poppins-SemiBold.ttf",
+      "size": 20,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_semibold_25",
+      "file": "Poppins-SemiBold.ttf",
+      "size": 25,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_semibold_30",
+      "file": "Poppins-SemiBold.ttf",
+      "size": 30,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_semibold_35",
+      "file": "Poppins-SemiBold.ttf",
+      "size": 35,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_semibold_40",
+      "file": "Poppins-SemiBold.ttf",
+      "size": 40,
+      "range": "0x20-0x7E",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_light_60",
+      "file": "Poppins-Light.ttf",
+      "size": 60,
+      "symbols": "0123456789:",
+      "bpp": 2
+    },
+    {
+      "name": "poppins_semibold_60",
+      "file": "Poppins-SemiBold.ttf",
+      "size": 60,
+      "symbols": "0123456789:",
+      "bpp": 2
+    }
+  ],
+  "images": []
+}
+
