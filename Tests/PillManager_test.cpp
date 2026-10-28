@@ -324,4 +324,32 @@ TEST_F(PillManagerTest, SupportsSoundAndVibrateOrVibrateOnlyMode)
     EXPECT_FALSE(restored.isVibrateOnly());
 }
 
+TEST_F(PillManagerTest, ExecuteCalculatesSleepAndHandlesNoWork)
+{
+    PillManager mgr(fx.kernel);
+
+    // Default schedule has Medication 1 enabled with alarms -> active alarms exist
+    std::tm tmNow {};
+    tmNow.tm_hour = 8;
+    tmNow.tm_min  = 30;
+    tmNow.tm_sec  = 15;
+    const std::time_t nowUtc = 1700000000;
+
+    // 60 - 15 = 45 seconds left until next minute
+    uint32_t sleepMs = mgr.execute(tmNow, nowUtc);
+    EXPECT_EQ(sleepMs, 45000u);
+
+    // Disable all medications -> execute returns kNoWork
+    Medication meds[PillSync::kMaxMedications] {};
+    for (std::size_t i = 0; i < PillSync::kMaxMedications; ++i) {
+        meds[i] = mgr.getMedication(i);
+        meds[i].enabled = false;
+    }
+    EXPECT_TRUE(mgr.saveMedications(meds));
+    EXPECT_FALSE(mgr.hasActiveAlarms());
+
+    sleepMs = mgr.execute(tmNow, nowUtc);
+    EXPECT_EQ(sleepMs, PillManager::kNoWork);
+}
+
 } // namespace

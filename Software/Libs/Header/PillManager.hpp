@@ -26,6 +26,8 @@ class PillManager
 public:
     using AlarmCallback = std::function<void(const ActiveAlert& alert)>;
 
+    static constexpr uint32_t kNoWork = 0xFFFFFFFFu;
+
     struct SnoozedEntry {
         uint8_t     medIndex      = 0;
         uint8_t     alarmIndex    = 0;
@@ -75,6 +77,9 @@ public:
 
     /// Evaluate alarms and snoozes at the given local HH:MM and UTC timestamp.
     void checkAlarms(uint8_t currentHour, uint8_t currentMinute, std::time_t nowUtc);
+
+    /// Check alarms and return milliseconds until the next required wake-up (or kNoWork).
+    uint32_t execute(const std::tm& tmNow, std::time_t nowUtc);
 
     /// Snooze the currently ringing alarm (up to kMaxSnoozeCount = 3 times).
     /// Returns true if snoozed, false if max snoozes reached (in which case it dismisses).

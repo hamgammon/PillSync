@@ -56,6 +56,7 @@ void AlarmActionScreen::build()
     populateItems();
 
     mMenu    = std::make_unique<Widgets::WheelMenu>(mRoot, mItems, kItemCount);
+    mMenu->setCircular(false);
     mButtons = std::make_unique<Widgets::Buttons>(mRoot);
     mTitle   = std::make_unique<Widgets::Title>(mRoot, mTitleBuf);
 

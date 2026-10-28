@@ -88,13 +88,17 @@ void Service::run()
     });
 
     while (true) {
-        const Instant now = getNow();
-        mPillManager.checkAlarms(static_cast<uint8_t>(now.local.tm_hour),
-                                 static_cast<uint8_t>(now.local.tm_min),
-                                 now.utc);
+        const Instant now       = getNow();
+        uint32_t      sleepTime = mPillManager.execute(now.local, now.utc);
+
+        // If no work is scheduled and GUI is not started, wake periodically to evaluate
+        // system state; otherwise sleep until the next alarm check or incoming message.
+        if (!mGUIStarted && sleepTime == PillSync::PillManager::kNoWork) {
+            sleepTime = 60000u;
+        }
 
         SDK::MessageBase* msg = nullptr;
-        if (mKernel.comm.getMessage(msg, 1000)) {
+        if (mKernel.comm.getMessage(msg, sleepTime)) {
             switch (msg->getType()) {
                 case SDK::MessageType::COMMAND_APP_STOP:
                     LOG_INFO("Force exit from the application\n");
@@ -224,17 +228,28 @@ void Service::playEffect(const PillSync::ActiveAlert& alert)
     if (!alert.vibrateOnly) {
         auto* buzzerMsg = mKernel.comm.allocateMessage<SDK::Message::RequestBuzzerPlay>();
         if (buzzerMsg) {
-            buzzerMsg->notes[0].volume = 100;
-            buzzerMsg->notes[0].time   = 750;
-            buzzerMsg->notes[1].volume = 0;
-            buzzerMsg->notes[1].time   = 250;
-            buzzerMsg->notes[2].volume = 100;
-            buzzerMsg->notes[2].time   = 750;
-            buzzerMsg->notes[3].volume = 0;
-            buzzerMsg->notes[3].time   = 250;
-            buzzerMsg->notes[4].volume = 100;
-            buzzerMsg->notes[4].time   = 750;
-            buzzerMsg->notesCount      = 5;
+            // Melodic 3-tone chime: 1318 Hz (E6), 1568 Hz (G6), 2093 Hz (C7)
+            buzzerMsg->notes[0].volume    = 100;
+            buzzerMsg->notes[0].time      = 750;
+            buzzerMsg->notes[0].frequency = 1318;
+
+            buzzerMsg->notes[1].volume    = 0;
+            buzzerMsg->notes[1].time      = 250;
+            buzzerMsg->notes[1].frequency = 0;
+
+            buzzerMsg->notes[2].volume    = 100;
+            buzzerMsg->notes[2].time      = 750;
+            buzzerMsg->notes[2].frequency = 1568;
+
+            buzzerMsg->notes[3].volume    = 0;
+            buzzerMsg->notes[3].time      = 250;
+            buzzerMsg->notes[3].frequency = 0;
+
+            buzzerMsg->notes[4].volume    = 100;
+            buzzerMsg->notes[4].time      = 750;
+            buzzerMsg->notes[4].frequency = 2093;
+
+            buzzerMsg->notesCount         = 5;
             mKernel.comm.sendMessage(buzzerMsg);
             mKernel.comm.releaseMessage(buzzerMsg);
         }

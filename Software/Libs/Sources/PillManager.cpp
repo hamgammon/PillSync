@@ -658,6 +658,37 @@ void PillManager::checkAlarms(uint8_t currentHour, uint8_t currentMinute, std::t
     }
 }
 
+uint32_t PillManager::execute(const std::tm& tmNow, std::time_t nowUtc)
+{
+    checkAlarms(static_cast<uint8_t>(tmNow.tm_hour),
+                static_cast<uint8_t>(tmNow.tm_min),
+                nowUtc);
+
+    if (!hasActiveAlarms()) {
+        LOG_DEBUG("No active alarms or snoozes; no timed wake-up needed\n");
+        return kNoWork;
+    }
+
+    // Seconds until next minute boundary (1..60)
+    int32_t secondsLeft = 60 - static_cast<int32_t>(tmNow.tm_sec);
+    if (secondsLeft <= 0) {
+        secondsLeft = 1;
+    }
+
+    // If there are pending snoozes, wake earlier if a snooze deadline is before next minute
+    for (const auto& s : mSnoozedAlarms) {
+        if (s.nextTriggerAt <= nowUtc) {
+            return 100u; // Snooze is immediately due
+        }
+        const int32_t snoozeSec = static_cast<int32_t>(s.nextTriggerAt - nowUtc);
+        if (snoozeSec > 0 && snoozeSec < secondsLeft) {
+            secondsLeft = snoozeSec;
+        }
+    }
+
+    return static_cast<uint32_t>(secondsLeft) * 1000u;
+}
+
 bool PillManager::snoozeActiveAlert(std::time_t nowUtc)
 {
     if (!mActiveAlert.active) {
