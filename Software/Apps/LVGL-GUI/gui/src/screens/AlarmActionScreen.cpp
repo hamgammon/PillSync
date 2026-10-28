@@ -40,6 +40,15 @@ void AlarmActionScreen::populateItems()
     mItems[kItemSetTime].centerFont = &poppins_semibold_25;
     mItems[kItemSetTime].tip        = mTimeTipBuf;
     mItems[kItemSetTime].tipColor   = Color::TEAL;
+
+    std::snprintf(mAlertTipBuf, sizeof(mAlertTipBuf), "%s",
+                  mModel.isVibrateOnly() ? "Vibrate Only" : "Sound & Vibrate");
+    mItems[kItemAlertMode].style      = Style::Tip;
+    mItems[kItemAlertMode].text       = "Alert Mode";
+    mItems[kItemAlertMode].itemText   = "Alert Mode";
+    mItems[kItemAlertMode].centerFont = &poppins_semibold_25;
+    mItems[kItemAlertMode].tip        = mAlertTipBuf;
+    mItems[kItemAlertMode].tipColor   = Color::TEAL;
 }
 
 void AlarmActionScreen::build()
@@ -104,6 +113,8 @@ void AlarmActionScreen::onKey(uint8_t code)
             } else if (sel == kItemSetTime) {
                 mModel.setAlarmActionCursor(sel);
                 ScreenManager::instance().switchTo(ScreenId::TimePicker);
+            } else if (sel == kItemAlertMode) {
+                mModel.toggleVibrateOnly();
             }
         } break;
         case Btn::R2:

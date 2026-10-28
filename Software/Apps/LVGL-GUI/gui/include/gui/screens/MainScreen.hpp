@@ -28,10 +28,14 @@ protected:
     void build() override;
 
 private:
+    static constexpr uint16_t kItemAlertMode = static_cast<uint16_t>(PillSync::kMaxMedications);
+    static constexpr uint16_t kItemCount     = static_cast<uint16_t>(PillSync::kMaxMedications + 1);
+
     void populateItems();
 
-    Widgets::WheelMenu::Item mItems[PillSync::kMaxMedications] {};
+    Widgets::WheelMenu::Item mItems[kItemCount] {};
     char                     mTipBufs[PillSync::kMaxMedications][24] {};
+    char                     mAlertModeTipBuf[24] {};
 
     std::unique_ptr<Widgets::Title>     mTitle;
     std::unique_ptr<Widgets::Buttons>   mButtons;

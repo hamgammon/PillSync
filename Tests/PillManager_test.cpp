@@ -282,4 +282,46 @@ TEST_F(PillManagerTest, PersistsAndRestoresScheduleAndSnoozesAcrossRestart)
     EXPECT_EQ(restored.getSnoozedAlarms()[0].ringsLeft, 3u);
 }
 
+TEST_F(PillManagerTest, SupportsSoundAndVibrateOrVibrateOnlyMode)
+{
+    fx.fileSystem.seedFile(
+        "/app_config.json",
+        R"({
+            "schema": 1,
+            "values": {
+                "vibrateOnly": true
+            }
+        })");
+
+    SDK::AppConfig cfg(fx.kernel,
+                       AppConfigSchema::kConfigFile,
+                       AppConfigSchema::kFields,
+                       AppConfigSchema::kFieldCount);
+
+    PillManager mgr(fx.kernel);
+    EXPECT_FALSE(mgr.isVibrateOnly()); // default is Sound & Vibrate
+
+    mgr.attachAppConfig(&cfg);
+    EXPECT_TRUE(mgr.isVibrateOnly());  // synced from app_config.json
+
+    std::vector<ActiveAlert> fired;
+    mgr.setCallback([&fired](const ActiveAlert& alert) {
+        fired.push_back(alert);
+    });
+
+    const std::time_t t0 = 1700000400;
+    mgr.checkAlarms(9, 0, t0);
+    ASSERT_EQ(fired.size(), 1u);
+    EXPECT_TRUE(fired[0].vibrateOnly);
+
+    // Toggle back to Sound & Vibrate on watch and verify write-back + persistence
+    EXPECT_TRUE(mgr.setVibrateOnly(false));
+    EXPECT_FALSE(mgr.isVibrateOnly());
+    EXPECT_FALSE(cfg.getBool("vibrateOnly"));
+
+    PillManager restored(fx.kernel);
+    EXPECT_TRUE(restored.load());
+    EXPECT_FALSE(restored.isVibrateOnly());
+}
+
 } // namespace

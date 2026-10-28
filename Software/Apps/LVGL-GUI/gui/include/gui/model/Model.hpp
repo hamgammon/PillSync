@@ -51,8 +51,14 @@ public:
 
     void saveMedications();
     bool is12HourFormat() const { return mTimeFormat12h; }
+    bool isVibrateOnly() const { return mVibrateOnly; }
+    void setVibrateOnly(bool vibrateOnly);
+    void toggleVibrateOnly();
 
     // Navigation selection state
+    void        setMainCursor(std::size_t idx) { mMainCursor = idx; }
+    std::size_t getMainCursor() const { return mMainCursor; }
+
     void        setSelectedMedIndex(std::size_t idx);
     std::size_t getSelectedMedIndex() const { return mSelectedMedIndex; }
 
@@ -100,7 +106,9 @@ private:
     PillSync::Medication  mMedications[PillSync::kMaxMedications] = {};
     PillSync::ActiveAlert mActiveAlert {};
     bool                  mTimeFormat12h = false;
+    bool                  mVibrateOnly   = false;
 
+    std::size_t mMainCursor          = 0;
     std::size_t mSelectedMedIndex   = 0;
     std::size_t mSelectedAlarmIndex = 0;
     std::size_t mMedDetailCursor    = 0;

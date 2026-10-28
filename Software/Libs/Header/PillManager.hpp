@@ -54,6 +54,11 @@ public:
 
     /// Save updated medications from watch UI, persist to JSON and write back to AppConfig.
     bool saveMedications(const Medication meds[kMaxMedications]);
+    bool saveSchedule(const Medication meds[kMaxMedications], bool vibrateOnly);
+
+    /// Alert mode: false = Sound & Vibrate, true = Vibrate Only.
+    bool isVibrateOnly() const { return mVibrateOnly; }
+    bool setVibrateOnly(bool vibrateOnly);
 
     /// Access current 5 medications.
     const Medication* getMedications() const { return mMedications; }
@@ -103,6 +108,7 @@ private:
     SDK::AppConfig*           mConfig = nullptr;
 
     Medication                mMedications[kMaxMedications] = {};
+    bool                      mVibrateOnly                  = false;
     std::vector<SnoozedEntry> mSnoozedAlarms;
     ActiveAlert               mActiveAlert {};
 

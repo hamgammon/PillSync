@@ -115,7 +115,7 @@ void Service::run()
                 case CustomMessage::SCHEDULE_LIST: {
                     LOG_DEBUG("Received updated SCHEDULE_LIST from GUI\n");
                     auto* m = static_cast<CustomMessage::ScheduleList*>(msg);
-                    mPillManager.saveMedications(m->meds);
+                    mPillManager.saveSchedule(m->meds, m->vibrateOnly);
                 } break;
 
                 case CustomMessage::ALARM_ACTIVATE_EFFECT: {
@@ -176,7 +176,7 @@ void Service::onStopGUI()
 void Service::sendScheduleList()
 {
     SDK::send_msg<CustomMessage::ScheduleList>(
-        mKernel, mPillManager.getMedications(), mTimeFormat12h);
+        mKernel, mPillManager.getMedications(), mTimeFormat12h, mPillManager.isVibrateOnly());
 }
 
 void Service::sendActivatedAlarm()
@@ -221,21 +221,23 @@ void Service::playEffect(const PillSync::ActiveAlert& alert)
         mKernel.comm.releaseMessage(vibroMsg);
     }
 
-    auto* buzzerMsg = mKernel.comm.allocateMessage<SDK::Message::RequestBuzzerPlay>();
-    if (buzzerMsg) {
-        buzzerMsg->notes[0].volume = 100;
-        buzzerMsg->notes[0].time   = 750;
-        buzzerMsg->notes[1].volume = 0;
-        buzzerMsg->notes[1].time   = 250;
-        buzzerMsg->notes[2].volume = 100;
-        buzzerMsg->notes[2].time   = 750;
-        buzzerMsg->notes[3].volume = 0;
-        buzzerMsg->notes[3].time   = 250;
-        buzzerMsg->notes[4].volume = 100;
-        buzzerMsg->notes[4].time   = 750;
-        buzzerMsg->notesCount      = 5;
-        mKernel.comm.sendMessage(buzzerMsg);
-        mKernel.comm.releaseMessage(buzzerMsg);
+    if (!alert.vibrateOnly) {
+        auto* buzzerMsg = mKernel.comm.allocateMessage<SDK::Message::RequestBuzzerPlay>();
+        if (buzzerMsg) {
+            buzzerMsg->notes[0].volume = 100;
+            buzzerMsg->notes[0].time   = 750;
+            buzzerMsg->notes[1].volume = 0;
+            buzzerMsg->notes[1].time   = 250;
+            buzzerMsg->notes[2].volume = 100;
+            buzzerMsg->notes[2].time   = 750;
+            buzzerMsg->notes[3].volume = 0;
+            buzzerMsg->notes[3].time   = 250;
+            buzzerMsg->notes[4].volume = 100;
+            buzzerMsg->notes[4].time   = 750;
+            buzzerMsg->notesCount      = 5;
+            mKernel.comm.sendMessage(buzzerMsg);
+            mKernel.comm.releaseMessage(buzzerMsg);
+        }
     }
 }
 

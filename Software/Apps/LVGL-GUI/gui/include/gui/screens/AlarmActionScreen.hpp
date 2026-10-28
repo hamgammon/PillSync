@@ -28,14 +28,16 @@ protected:
     void build() override;
 
 private:
-    static constexpr uint16_t kItemToggle  = 0;
-    static constexpr uint16_t kItemSetTime = 1;
-    static constexpr uint16_t kItemCount   = 2;
+    static constexpr uint16_t kItemToggle    = 0;
+    static constexpr uint16_t kItemSetTime   = 1;
+    static constexpr uint16_t kItemAlertMode = 2;
+    static constexpr uint16_t kItemCount     = 3;
 
     void populateItems();
 
     Widgets::WheelMenu::Item mItems[kItemCount] {};
     char                     mTimeTipBuf[24] {};
+    char                     mAlertTipBuf[24] {};
     char                     mTitleBuf[24] {};
 
     std::unique_ptr<Widgets::Title>     mTitle;

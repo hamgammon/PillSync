@@ -35,11 +35,14 @@ constexpr SDK::MessageType::Type ALARM_DISMISS         = 0x00000005;
 struct ScheduleList : public SDK::MessageBase {
     PillSync::Medication meds[PillSync::kMaxMedications] = {};
     bool                 timeFormat12h                   = false;
+    bool                 vibrateOnly                     = false;
 
     explicit ScheduleList(const PillSync::Medication list[PillSync::kMaxMedications],
-                          bool                       format12h = false)
+                          bool                       format12h = false,
+                          bool                       vibOnly   = false)
         : SDK::MessageBase(SCHEDULE_LIST)
         , timeFormat12h(format12h)
+        , vibrateOnly(vibOnly)
     {
         std::memcpy(meds, list, sizeof(meds));
     }

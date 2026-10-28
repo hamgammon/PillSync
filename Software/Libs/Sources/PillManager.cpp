@@ -133,6 +133,8 @@ void PillManager::syncFromAppConfig()
         }
     }
 
+    mVibrateOnly = mConfig->getBool(AppConfigSchema::kVibrateOnlyKey);
+
     mSnoozedAlarms.erase(
         std::remove_if(mSnoozedAlarms.begin(), mSnoozedAlarms.end(),
                        [this](const SnoozedEntry& s) {
@@ -166,6 +168,8 @@ bool PillManager::writeToAppConfig()
             mConfig->setString(AppConfigSchema::kMedAlarmKeys[i][j], buf);
         }
     }
+
+    mConfig->setBool(AppConfigSchema::kVibrateOnlyKey, mVibrateOnly);
 
     return mConfig->save();
 }
@@ -264,6 +268,11 @@ bool PillManager::load()
         }
     }
 
+    bool vibOnly = mVibrateOnly;
+    if (reader.get("vibrate_only", vibOnly)) {
+        mVibrateOnly = vibOnly;
+    }
+
     if (mConfig) {
         syncFromAppConfig();
     }
@@ -277,6 +286,7 @@ bool PillManager::saveLocalState() const
     SDK::JsonStreamWriter writer(buff, sizeof(buff));
 
     writer.startMap();
+    writer.add("vibrate_only", mVibrateOnly);
     {
         SDK::JsonStreamWriter::KeyedArrayScope medsArray(writer, "medications", kMaxMedications);
         for (std::size_t i = 0; i < kMaxMedications; ++i) {
@@ -318,7 +328,13 @@ bool PillManager::saveLocalState() const
 
 bool PillManager::saveMedications(const Medication meds[kMaxMedications])
 {
+    return saveSchedule(meds, mVibrateOnly);
+}
+
+bool PillManager::saveSchedule(const Medication meds[kMaxMedications], bool vibrateOnly)
+{
     std::memcpy(mMedications, meds, sizeof(mMedications));
+    mVibrateOnly = vibrateOnly;
 
     mSnoozedAlarms.erase(
         std::remove_if(mSnoozedAlarms.begin(), mSnoozedAlarms.end(),
@@ -334,6 +350,14 @@ bool PillManager::saveMedications(const Medication meds[kMaxMedications])
         mSnoozedAlarms.end());
 
     saveSnoozes();
+    bool localOk = saveLocalState();
+    bool cfgOk   = writeToAppConfig();
+    return localOk && cfgOk;
+}
+
+bool PillManager::setVibrateOnly(bool vibrateOnly)
+{
+    mVibrateOnly = vibrateOnly;
     bool localOk = saveLocalState();
     bool cfgOk   = writeToAppConfig();
     return localOk && cfgOk;
@@ -560,6 +584,7 @@ void PillManager::checkAlarms(uint8_t currentHour, uint8_t currentMinute, std::t
 
                     ActiveAlert alert {};
                     alert.active      = true;
+                    alert.vibrateOnly = mVibrateOnly;
                     alert.medIndex    = i;
                     alert.alarmIndex  = j;
                     alert.hour        = slot.hour;
@@ -606,6 +631,7 @@ void PillManager::checkAlarms(uint8_t currentHour, uint8_t currentMinute, std::t
 
             ActiveAlert alert {};
             alert.active      = true;
+            alert.vibrateOnly = mVibrateOnly;
             alert.medIndex    = medIdx;
             alert.alarmIndex  = alarmIdx;
             alert.hour        = origH;

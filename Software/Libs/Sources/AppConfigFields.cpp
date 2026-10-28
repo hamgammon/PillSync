@@ -60,6 +60,8 @@ const AppConfig::Field kFields[kFieldCount] = {
     AppConfig::stringField("med5Alarm1", "09:00", 3, 5),
     AppConfig::stringField("med5Alarm2", "OFF", 3, 5),
     AppConfig::stringField("med5Alarm3", "OFF", 3, 5),
+
+    AppConfig::boolField("vibrateOnly", false),
 };
 
 } // namespace AppConfigSchema

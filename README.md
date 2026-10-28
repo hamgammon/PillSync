@@ -26,17 +26,18 @@
   - Press **R1 (Top-Right)** to snooze for 5 minutes (up to 3 times).
   - Once an alarm has been snoozed 3 times (`Max snoozes (3/3)`), the Snooze action is hidden and only **R2 (Bottom-Right, Dismiss)** is available.
   - Press **R2 (Bottom-Right)** at any time to dismiss the alarm and cancel any remaining snoozes for that slot.
+- **Alert Mode (Sound & Vibrate / Vibrate Only)**: Choose between **Sound & Vibrate** (default) or **Vibrate Only** (silent buzzer) from either the watch UI or the UNA Watch Companion App (`vibrateOnly`).
 - **Dual Configuration (Companion App + On-Watch UI)**:
-  - **UNA Watch Companion App (`SDK::AppConfig`)**: `Output/app-manifest.json` and `Software/Libs/Header/AppConfigFields.hpp` declare all 25 configuration fields (`med1Name`, `med1Enabled`, `med1Alarm1`..`med5Alarm3`) stored in `app_config.json`.
-  - **On-Watch LVGL UI**: Browse all 5 medications, toggle medications or individual alarms `ON`/`OFF`, and edit alarm times (`HH:MM`) using the two-stage `TwoTonePicker` directly on the watch. Edits made on the watch are written back to `app_config.json` and `pillsync.json`.
+  - **UNA Watch Companion App (`SDK::AppConfig`)**: `Output/app-manifest.json` and `Software/Libs/Header/AppConfigFields.hpp` declare all 26 configuration fields (`med1Name`, `med1Enabled`, `med1Alarm1`..`med5Alarm3`, and `vibrateOnly`) stored in `app_config.json`.
+  - **On-Watch LVGL UI**: Browse all 5 medications, toggle medications or individual alarms `ON`/`OFF`, switch alert mode (`Sound & Vibrate` / `Vibrate Only`), and edit alarm times (`HH:MM`) using the two-stage `TwoTonePicker` directly on the watch. Edits made on the watch are written back to `app_config.json` and `pillsync.json`.
 
 ## Project Layout
 
 ```text
 PillSync/
 ├── Output/
-│   ├── app-manifest.json          # Companion app manifest & 25 configFields schema
-│   └── PillSync_1.0.0.uapp        # Built watch application package
+│   ├── app-manifest.json          # Companion app manifest & 26 configFields schema
+│   └── PillSync_1.1.0.uapp        # Built watch application package
 ├── Resources/
 │   ├── icon_30x30.png             # 30x30 small app icon
 │   ├── icon_60x60.png             # 60x60 main app icon

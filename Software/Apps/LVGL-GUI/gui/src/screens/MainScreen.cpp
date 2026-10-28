@@ -41,13 +41,22 @@ void MainScreen::populateItems()
         mItems[i].tip        = mTipBufs[i];
         mItems[i].tipColor   = (med.enabled && count > 0) ? Color::TEAL : Color::GRAY;
     }
+
+    std::snprintf(mAlertModeTipBuf, sizeof(mAlertModeTipBuf), "%s",
+                  mModel.isVibrateOnly() ? "Vibrate Only" : "Sound & Vibrate");
+    mItems[kItemAlertMode].style      = Style::Tip;
+    mItems[kItemAlertMode].text       = "Alert Mode";
+    mItems[kItemAlertMode].itemText   = "Alert Mode";
+    mItems[kItemAlertMode].centerFont = &poppins_semibold_25;
+    mItems[kItemAlertMode].tip        = mAlertModeTipBuf;
+    mItems[kItemAlertMode].tipColor   = Color::TEAL;
 }
 
 void MainScreen::build()
 {
     populateItems();
 
-    mMenu    = std::make_unique<Widgets::WheelMenu>(mRoot, mItems, PillSync::kMaxMedications);
+    mMenu    = std::make_unique<Widgets::WheelMenu>(mRoot, mItems, kItemCount);
     mButtons = std::make_unique<Widgets::Buttons>(mRoot);
     mTitle   = std::make_unique<Widgets::Title>(mRoot, "PILLSYNC");
 
@@ -61,7 +70,7 @@ void MainScreen::onShow()
 {
     populateItems();
     mMenu->refresh();
-    mMenu->select(static_cast<uint16_t>(mModel.getSelectedMedIndex()));
+    mMenu->select(static_cast<uint16_t>(mModel.getMainCursor()));
     mModel.resetIdleTimer();
 
     if (mModel.getActiveAlert().active) {
@@ -71,7 +80,7 @@ void MainScreen::onShow()
 
 void MainScreen::onHide()
 {
-    mModel.setSelectedMedIndex(mMenu->selected());
+    mModel.setMainCursor(mMenu->selected());
 }
 
 void MainScreen::onScheduleUpdated()
@@ -92,11 +101,17 @@ void MainScreen::onKey(uint8_t code)
         case Btn::L2:
             mMenu->next();
             break;
-        case Btn::R1:
-            mModel.setSelectedMedIndex(mMenu->selected());
-            mModel.setMedDetailCursor(0);
-            ScreenManager::instance().switchTo(ScreenId::MedDetail);
-            break;
+        case Btn::R1: {
+            const uint16_t sel = mMenu->selected();
+            mModel.setMainCursor(sel);
+            if (sel < PillSync::kMaxMedications) {
+                mModel.setSelectedMedIndex(sel);
+                mModel.setMedDetailCursor(0);
+                ScreenManager::instance().switchTo(ScreenId::MedDetail);
+            } else if (sel == kItemAlertMode) {
+                mModel.toggleVibrateOnly();
+            }
+        } break;
         case Btn::R2:
             mModel.exitApp();
             break;

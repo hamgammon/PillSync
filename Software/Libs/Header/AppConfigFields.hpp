@@ -25,8 +25,8 @@ constexpr const char* kConfigFile = "app_config.json";
 /// Longest medication name in bytes (maxLength = 16), plus null terminator.
 constexpr size_t kNameBytes = 16 + 1;
 
-/// Number of fields in kFields (5 medications x 5 fields = 25 <= skMaxFields).
-constexpr size_t kFieldCount = 25;
+/// Number of fields in kFields (5 medications x 5 fields + 1 alert mode field = 26 <= skMaxFields).
+constexpr size_t kFieldCount = 26;
 
 /// The declaration, mirroring app-manifest.json's "configFields".
 extern const SDK::AppConfig::Field kFields[kFieldCount];
@@ -35,6 +35,7 @@ extern const SDK::AppConfig::Field kFields[kFieldCount];
 extern const char* const kMedNameKeys[5];
 extern const char* const kMedEnabledKeys[5];
 extern const char* const kMedAlarmKeys[5][3];
+constexpr const char*    kVibrateOnlyKey = "vibrateOnly";
 
 } // namespace AppConfigSchema
 

@@ -89,10 +89,21 @@ void Model::switchToNextPriorityScreen()
 
 void Model::saveMedications()
 {
-    SDK::send_msg<CustomMessage::ScheduleList>(mKernel, mMedications, mTimeFormat12h);
+    SDK::send_msg<CustomMessage::ScheduleList>(mKernel, mMedications, mTimeFormat12h, mVibrateOnly);
     if (modelListener) {
         modelListener->onScheduleUpdated();
     }
+}
+
+void Model::setVibrateOnly(bool vibrateOnly)
+{
+    mVibrateOnly = vibrateOnly;
+    saveMedications();
+}
+
+void Model::toggleVibrateOnly()
+{
+    setVibrateOnly(!mVibrateOnly);
 }
 
 void Model::setSelectedMedIndex(std::size_t idx)
@@ -215,6 +226,7 @@ bool Model::customMessageHandler(SDK::MessageBase* msg)
             auto* m = static_cast<CustomMessage::ScheduleList*>(msg);
             std::memcpy(mMedications, m->meds, sizeof(mMedications));
             mTimeFormat12h = m->timeFormat12h;
+            mVibrateOnly   = m->vibrateOnly;
             listener->onScheduleUpdated();
         } break;
 

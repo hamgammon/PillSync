@@ -68,6 +68,7 @@ struct Medication {
 
 struct ActiveAlert {
     bool    active                      = false;
+    bool    vibrateOnly                 = false;
     uint8_t medIndex                    = 0;
     uint8_t alarmIndex                  = 0;
     uint8_t hour                        = 0;
