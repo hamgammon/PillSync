@@ -41,7 +41,7 @@ target_include_directories(PillSyncLVGLSimulator PRIVATE
 target_compile_definitions(PillSyncLVGLSimulator PRIVATE
     ${UNA_SDK_DEFINES_SIMULATOR}
     ${UNA_SDK_DEFINES_GUI_LVGL}
-    APP_ID="C48F9E21A3B76D50"
+    APP_ID="4EB8121CEAB34CD5"
     DEV_ID="UNA Simulator"
     BUILD_VERSION="1.0.0-sim"
 )

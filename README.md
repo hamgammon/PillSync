@@ -36,7 +36,7 @@
 PillSync/
 ├── Output/
 │   ├── app-manifest.json          # Companion app manifest & 25 configFields schema
-│   └── PillSync_0.0.0-dev.uapp    # Built watch application package
+│   └── PillSync_1.0.0.uapp        # Built watch application package
 ├── Resources/
 │   ├── icon_30x30.png             # 30x30 small app icon
 │   ├── icon_60x60.png             # 60x60 main app icon

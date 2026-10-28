@@ -10,7 +10,7 @@
   "minKernelVersion": "1.4.0",
   "requiredHardware": [],
   "description": "Track up to 5 medications with 3 daily alarms each and up to 3 snoozes per alarm.",
-  "id": "C48F9E21A3B76D50",
+  "id": "4EB8121CEAB34CD5",
   "configFile": "app_config.json",
   "previews": "previews/",
   "configFields": [
