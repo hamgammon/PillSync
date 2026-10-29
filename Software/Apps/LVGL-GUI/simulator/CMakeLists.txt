@@ -43,7 +43,7 @@ target_compile_definitions(PillSyncLVGLSimulator PRIVATE
     ${UNA_SDK_DEFINES_GUI_LVGL}
     APP_ID="4EB8121CEAB34CD5"
     DEV_ID="UNA Simulator"
-    BUILD_VERSION="1.2.0-sim"
+    BUILD_VERSION="1.3.0-sim"
 )
 
 find_package(Threads REQUIRED)
