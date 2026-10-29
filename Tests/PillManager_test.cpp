@@ -16,6 +16,7 @@
 #include "Commands.hpp"
 #include "Medication.hpp"
 #include "PillManager.hpp"
+#include "Service.hpp"
 
 namespace
 {
@@ -350,6 +351,56 @@ TEST_F(PillManagerTest, ExecuteCalculatesSleepAndHandlesNoWork)
 
     sleepMs = mgr.execute(tmNow, nowUtc);
     EXPECT_EQ(sleepMs, PillManager::kNoWork);
+}
+
+TEST_F(PillManagerTest, ServiceDetectsCompanionAppConfigUpdatesInBackground)
+{
+    fx.fileSystem.seedFile(
+        "/app_config.json",
+        R"({
+            "schema": 1,
+            "values": {
+                "med1Name": "Metformin",
+                "med1Enabled": true,
+                "med1Alarm1": "08:00",
+                "med1Alarm2": "OFF",
+                "med1Alarm3": "OFF"
+            }
+        })");
+
+    Service srv(fx.kernel);
+    EXPECT_FALSE(srv.checkAppConfigUpdates());
+
+    // Initially, med 1 alarm 1 is at 08:00
+    // Note: srv.run() calls reloadAppConfig, but in this unit test we trigger checkAppConfigUpdates directly
+    // Force initial load:
+    EXPECT_TRUE(srv.computeConfigFileHash() != 0);
+
+    // Simulate companion app writing new schedule to /app_config.json via BLE FTS
+    fx.fileSystem.seedFile(
+        "/app_config.json",
+        R"({
+            "schema": 1,
+            "values": {
+                "med1Name": "Metformin",
+                "med1Enabled": true,
+                "med1Alarm1": "11:45",
+                "med1Alarm2": "OFF",
+                "med1Alarm3": "OFF"
+            }
+        })");
+
+    // Service detects the hash change, reloads config, and syncs immediately
+    EXPECT_TRUE(srv.checkAppConfigUpdates());
+    EXPECT_FALSE(srv.checkAppConfigUpdates());
+
+    // Verify the internal PillManager has received the new 11:45 alarm without opening GUI
+    const Medication& med1 = srv.getPillManager().getMedication(0);
+    EXPECT_STREQ(med1.name, "Metformin");
+    EXPECT_TRUE(med1.enabled);
+    EXPECT_TRUE(med1.alarms[0].enabled);
+    EXPECT_EQ(med1.alarms[0].hour, 11u);
+    EXPECT_EQ(med1.alarms[0].minute, 45u);
 }
 
 } // namespace

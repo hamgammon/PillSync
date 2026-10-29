@@ -20,6 +20,7 @@ add_executable(PillManager_test
     PillManager_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Software/Libs/Sources/AppConfigFields.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../Software/Libs/Sources/PillManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Software/Libs/Sources/Service.cpp
     ${UNA_SDK_ROOT}/Tests/Host/Support/KernelTestDoubles.cpp
     ${UNA_SDK_ROOT}/Libs/Source/AppConfig/AppConfig.cpp
     ${UNA_SDK_ROOT}/Libs/Source/JSON/JsonStreamReader.cpp

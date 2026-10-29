@@ -8,6 +8,7 @@
 #include "Service.hpp"
 #include "SDK/Messages/MessageGuard.hpp"
 
+#include <algorithm>
 #include <ctime>
 
 #define LOG_MODULE_PRX      "Service"
@@ -37,11 +38,67 @@ Instant getNow()
 } // namespace
 
 Service::Service(SDK::Kernel& kernel)
-    : mKernel(SDK::KernelProviderService::GetInstance().getKernel())
+    : mKernel(kernel)
     , mConfig(nullptr)
     , mPillManager(mKernel)
+    , mLastConfigHash(computeConfigFileHash())
 {
-    (void)kernel;
+}
+
+uint32_t Service::computeConfigFileHash() const
+{
+    char path[SDK::AppConfig::skMaxFileNameLen + 2] {};
+    std::snprintf(path, sizeof(path), "/%s", AppConfigSchema::kConfigFile);
+
+    if (!mKernel.fs.exist(path)) {
+        return 0;
+    }
+
+    auto file = mKernel.fs.file(path);
+    if (!file || !file->open()) {
+        return 0;
+    }
+
+    const size_t size = file->size();
+    if (size == 0 || size > SDK::AppConfig::skMaxFileBytes) {
+        file->close();
+        return 0;
+    }
+
+    uint32_t hash = 2166136261u;
+    char buffer[128];
+    size_t totalRead = 0;
+    while (totalRead < size) {
+        const size_t toRead = std::min(sizeof(buffer), size - totalRead);
+        size_t bytesRead = 0;
+        if (!file->read(buffer, toRead, bytesRead) || bytesRead == 0) {
+            break;
+        }
+        for (size_t i = 0; i < bytesRead; ++i) {
+            hash ^= static_cast<uint8_t>(buffer[i]);
+            hash *= 16777619u;
+        }
+        totalRead += bytesRead;
+    }
+    file->close();
+
+    hash ^= static_cast<uint32_t>(size);
+    return hash;
+}
+
+bool Service::checkAppConfigUpdates()
+{
+    const uint32_t currentHash = computeConfigFileHash();
+    if (currentHash != 0 && currentHash != mLastConfigHash) {
+        LOG_INFO("Detected external change to %s; reloading configuration\n",
+                 AppConfigSchema::kConfigFile);
+        reloadAppConfig();
+        if (mGUIStarted) {
+            sendScheduleList();
+        }
+        return true;
+    }
+    return false;
 }
 
 void Service::reloadAppConfig()
@@ -51,6 +108,7 @@ void Service::reloadAppConfig()
                                      AppConfigSchema::kFields,
                                      AppConfigSchema::kFieldCount));
     mPillManager.attachAppConfig(mConfig.get());
+    mLastConfigHash = computeConfigFileHash();
 }
 
 void Service::refreshTimeFormat()
@@ -88,6 +146,8 @@ void Service::run()
     });
 
     while (true) {
+        checkAppConfigUpdates();
+
         const Instant now       = getNow();
         uint32_t      sleepTime = mPillManager.execute(now.local, now.utc);
 
@@ -95,6 +155,13 @@ void Service::run()
         // system state; otherwise sleep until the next alarm check or incoming message.
         if (!mGUIStarted && sleepTime == PillSync::PillManager::kNoWork) {
             sleepTime = 60000u;
+        }
+
+        // Cap sleep interval so phone companion app config changes are picked up promptly
+        // (within 5 seconds) without requiring the user to open the watch GUI.
+        static constexpr uint32_t kMaxConfigPollIntervalMs = 5000u;
+        if (sleepTime > kMaxConfigPollIntervalMs) {
+            sleepTime = kMaxConfigPollIntervalMs;
         }
 
         SDK::MessageBase* msg = nullptr;
@@ -120,6 +187,7 @@ void Service::run()
                     LOG_DEBUG("Received updated SCHEDULE_LIST from GUI\n");
                     auto* m = static_cast<CustomMessage::ScheduleList*>(msg);
                     mPillManager.saveSchedule(m->meds, m->vibrateOnly);
+                    mLastConfigHash = computeConfigFileHash();
                 } break;
 
                 case CustomMessage::ALARM_ACTIVATE_EFFECT: {

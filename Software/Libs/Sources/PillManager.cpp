@@ -114,7 +114,7 @@ void PillManager::attachAppConfig(SDK::AppConfig* config)
 
 void PillManager::syncFromAppConfig()
 {
-    if (!mConfig) {
+    if (!mConfig || !mConfig->isLoaded()) {
         return;
     }
 
@@ -134,6 +134,18 @@ void PillManager::syncFromAppConfig()
     }
 
     mVibrateOnly = mConfig->getBool(AppConfigSchema::kVibrateOnlyKey);
+
+    if (mActiveAlert.active) {
+        if (mActiveAlert.medIndex < kMaxMedications && mActiveAlert.alarmIndex < kAlarmsPerMed) {
+            const Medication& med  = mMedications[mActiveAlert.medIndex];
+            const AlarmSlot&  slot = med.alarms[mActiveAlert.alarmIndex];
+            if (!med.enabled || !slot.enabled || slot.hour != mActiveAlert.hour || slot.minute != mActiveAlert.minute) {
+                mActiveAlert = {};
+            }
+        } else {
+            mActiveAlert = {};
+        }
+    }
 
     mSnoozedAlarms.erase(
         std::remove_if(mSnoozedAlarms.begin(), mSnoozedAlarms.end(),
